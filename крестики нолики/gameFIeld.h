@@ -6,7 +6,7 @@ class GameField
 public:
 	GameField();
 
-	void setCellsColumn(int column = 3);
+	void setCellsColumn(int column);
 
 	int getCellsCol();
 
