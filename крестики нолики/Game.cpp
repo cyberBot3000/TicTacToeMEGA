@@ -33,7 +33,7 @@ public:
 		}
 		winnerSymbol = EMPTY;
 		activity = true;
-		// LOL
+		// LOL hui lol
 	}
 	void setCellsColumn(int column = 3)
 	{
