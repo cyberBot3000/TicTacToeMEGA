@@ -12,7 +12,7 @@ renderField::renderField(GameField* fieldToDraw)
 	icons.resize(field->getCellsCol());
 	for (int i = 0; i < field->getCellsCol(); i++)
 	{
-		icons[i].resize(field->getCellsCol(), new Empty());
+		icons[i].resize(field->getCellsCol(), NULL);
 	}
 
 	verticalBorders.resize(field->getCellsCol() + 1);
@@ -29,7 +29,7 @@ void renderField::setGameField(GameField* fieldToDraw)
 	icons.resize(field->getCellsCol());
 	for (int i = 0; i < field->getCellsCol(); i++)
 	{
-		icons[i].resize(field->getCellsCol(), new Empty());
+		icons[i].resize(field->getCellsCol(), NULL);
 	}
 
 	verticalBorders.resize(field->getCellsCol() + 1);
@@ -64,8 +64,8 @@ void renderField::setPosition(sf::Vector2f position)
 sf::Vector2i renderField::coordsToCell(sf::Vector2f cursorPosition)
 {
 	cursorPosition -= globalPosition;
-	if ((cursorPosition.x < 0 || cursorPosition.y < 0) ||
-		(cursorPosition.x > fieldSize.x || cursorPosition.y > fieldSize.y))
+	if ((cursorPosition.x <= 0 || cursorPosition.y <= 0) ||
+		(cursorPosition.x >= fieldSize.x || cursorPosition.y >= fieldSize.y))
 	{
 		return sf::Vector2i(-1, -1);
 	}
@@ -89,6 +89,10 @@ void renderField::update()
 				icons[i][j] = new Zero(sf::Vector2f(i * cellSize.x, j * cellSize.y) + globalPosition, cellSize);
 				break;
 			default:
+				if (icons[i][j] != NULL) 
+				{
+					delete icons[i][j];
+				}
 				icons[i][j] = new Empty();
 				break;
 			}

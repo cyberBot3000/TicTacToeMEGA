@@ -1,10 +1,13 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <iostream>
+#include <random>
+#include <ctime>
 #include "bigField.h"
 
 int main()
 {
+	srand(time(NULL));
 	sf::RenderWindow window(sf::VideoMode(800, 800), "SFML works!");
 	sf::RectangleShape background;
 	background.setFillColor(sf::Color::White);
@@ -26,6 +29,7 @@ int main()
 	bool gameBegin = true;
 	bool gameOver = false;
 	bool nextTurn = true;
+	sf::Vector2i lastTurn = sf::Vector2i(0, 0);
 	while (window.isOpen())
 	{
 		sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
@@ -45,7 +49,7 @@ int main()
 				if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 				{
 					game.clear();
-					gameOver = false;
+					//gameOver = false;
 				}
 			}
 			else
@@ -53,27 +57,39 @@ int main()
 				button.setOutlineColor(sf::Color::Black);
 			}
 		}
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !gameOver)
+		/*if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !gameOver)
 		{
 			if (!mouseButtonHold)
 			{
-				mouseButtonHold = true;
-				if (nextTurn)
-					game.placeSymbol(cursorCoords, CROSS);
-				else 
-					game.placeSymbol(cursorCoords, ZERO);
+				mouseButtonHold = true;*/
+		if (!gameOver) {
+			sf::Vector2i newTurn = sf::Vector2i(rand() % 3, rand() % 3);
+			if (nextTurn && game.placeSymbol(lastTurn, newTurn, CROSS) == true) {
 				nextTurn = !nextTurn;
-				if (game.isGameOver())
-				{
-					gameOver = true;
-				}
+				lastTurn = newTurn;
 			}
+			else if (!nextTurn && game.placeSymbol(lastTurn, newTurn, ZERO) == true) {
+				nextTurn = !nextTurn;
+				lastTurn = newTurn;
+			}
+			else {
+				lastTurn = sf::Vector2i(rand() % 3, rand() % 3);
+			}
+			if (game.isGameOver())
+			{
+				gameOver = true;
+			}
+		}
+			/*}
 		}
 		else
 		{
 			mouseButtonHold = false;
+		}*/
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::C))
+		{
+			game.clear();
 		}
-		
 		window.clear();
 		window.draw(background);
 		window.draw(game);
