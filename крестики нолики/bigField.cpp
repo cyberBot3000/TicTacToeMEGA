@@ -11,7 +11,6 @@ bigField::bigField(sf::Vector2f windowSize)
 	this->windowSize = windowSize;
 	gameBegin = true;
 	activeField = nullptr;
-	activeRenderField = nullptr;
 	boardSize = sf::Vector2u(windowSize.x / 3 - gap / 1.55, windowSize.y / 3 - gap / 1.55);
 	for (int i = 0; i < 3; i++)
 	{
@@ -27,7 +26,6 @@ bigField::bigField(sf::Vector2f windowSize)
 bigField::bigField(const bigField& other)
 {
 	this->activeField = new GameField(*other.activeField);
-	this->activeRenderField = new renderField(*other.activeRenderField);
 	this->boardsLogic = new GameField * [3];
 	this->boardsRender = new renderField * [3];
 	for (int i = 0; i < 3; i++)
@@ -48,7 +46,7 @@ bigField::bigField(const bigField& other)
 	this->gap = other.gap;
 	this->windowSize = other.windowSize;
 }
-void bigField::placeSymbol(sf::Vector2f cursorCoords, State symbol)
+ bool bigField::placeSymbol(sf::Vector2f cursorCoords, State symbol)
 {
 	for (int i = 0; i < 3; i++)
 	{
@@ -60,15 +58,13 @@ void bigField::placeSymbol(sf::Vector2f cursorCoords, State symbol)
 				if ((newIconPos != sf::Vector2i(-1, -1)) && (boardsLogic[i][j].getSymbol(newIconPos.x, newIconPos.y) == EMPTY))
 				{
 					boardsLogic[i][j].setSymbol(symbol, newIconPos.x, newIconPos.y);
-					activeField = &boardsLogic[newIconPos.x][newIconPos.y];
-					activeRenderField = &boardsRender[newIconPos.x][newIconPos.y];
-					if (activeField->noEmptyCells())
-						activeField = nullptr;
 					changeBoardsActivity(newIconPos);
+					return true;
 				}
 			}
 		}
 	}
+	return false;
 }
 void bigField::placeSymbol(sf::Vector2i cellPosition, GameField* activeField, State symbol)
 {
@@ -78,13 +74,30 @@ void bigField::placeSymbol(sf::Vector2i cellPosition, GameField* activeField, St
 		if ((newIconPos != sf::Vector2i(-1, -1)) && (activeField->getSymbol(newIconPos.x, newIconPos.y) == EMPTY))
 		{
 			activeField->setSymbol(symbol, newIconPos.x, newIconPos.y);
-			checkWin(*activeField);
-			activeField = &boardsLogic[newIconPos.x][newIconPos.y];
-			if (activeField->noEmptyCells())
-				activeField = nullptr;
 			changeBoardsActivity(newIconPos);
 		}
 	}
+}
+bool bigField::placeSymbol(sf::Vector2i fieldPosition, sf::Vector2i cellPosition, State symbol)
+{
+	if (fieldPosition.x < 0 || fieldPosition.x > 2 || fieldPosition.y < 0 || fieldPosition.y > 2)
+		return false;
+	int x_a = fieldPosition.x;
+	int y_a = fieldPosition.y;
+	if (boardsLogic[x_a][y_a].isActive())
+	{
+		sf::Vector2i newIconPos = cellPosition;
+		if (newIconPos.x < 0 || newIconPos.x > 2 || newIconPos.y < 0 || newIconPos.y > 2)
+			return false;
+
+		if ((boardsLogic[x_a][y_a].getSymbol(newIconPos.x, newIconPos.y) == EMPTY))
+		{
+			boardsLogic[x_a][y_a].setSymbol(symbol, newIconPos.x, newIconPos.y);
+			changeBoardsActivity(newIconPos);
+			return true;
+		}
+	}
+	return false;
 }
 bool bigField::isGameOver()
 {
@@ -93,8 +106,18 @@ bool bigField::isGameOver()
 	{
 		for (int j = 0; j < 3 && result; j++)
 		{
-			result *= (boardsLogic[i][j].getWinnerSymbol() != EMPTY && boardsLogic[i][j].noEmptyCells());
-			result *= boardsLogic[i][j].noEmptyCells() == false;
+			checkWin(boardsLogic[i][j]);
+			result *= (boardsLogic[i][j].getWinnerSymbol() != EMPTY) || (boardsLogic[i][j].getWinnerSymbol() == EMPTY && boardsLogic[i][j].noEmptyCells());
+		}
+	}
+	if(result == true)
+		return result;
+	result = true;
+	for (int i = 0; i < 3 && result; i++)
+	{
+		for (int j = 0; j < 3 && result; j++)
+		{
+			result *= boardsLogic[i][j].noEmptyCells();
 		}
 	}
 	return result;
@@ -149,22 +172,27 @@ void bigField::checkWin(GameField& field)
 }
 void bigField::changeBoardsActivity(sf::Vector2i boardPosition)
 {
-	if (boardPosition.x >= 0 && boardPosition.y >= 0 && boardPosition.x < 3 && boardPosition.y < 3)
+	if (boardPosition.x < 0 && boardPosition.y < 0 && boardPosition.x >= 3 && boardPosition.y >= 3)
 	{
-		bool currentFieldActivity = true;
-		if (boardsLogic[boardPosition.x][boardPosition.y].noEmptyCells())
+		return;
+	}
+	bool currentFieldActivity = true;
+	if (boardsLogic[boardPosition.x][boardPosition.y].noEmptyCells())
+	{
+		currentFieldActivity = false;
+		this->activeField = nullptr;
+	}
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
 		{
-			currentFieldActivity = false;
-		}
-		for (int i = 0; i < 3; i++)
-		{
-			for (int j = 0; j < 3; j++)
+			boardsLogic[i][j].setActivity(!currentFieldActivity);
+			if (i == boardPosition.x && j == boardPosition.y) 
 			{
-				boardsLogic[i][j].setActivity(!currentFieldActivity);
-				if (i == boardPosition.x && j == boardPosition.y)
-					boardsLogic[i][j].setActivity(currentFieldActivity);
-				boardsRender[i][j].update();
+				boardsLogic[i][j].setActivity(currentFieldActivity);
+				this->activeField = &boardsLogic[i][j];
 			}
+			boardsRender[i][j].update();
 		}
 	}
 }

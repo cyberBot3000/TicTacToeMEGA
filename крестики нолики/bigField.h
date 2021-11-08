@@ -9,9 +9,11 @@ public:
 
 	bigField(const bigField& other);
 
-	void placeSymbol(sf::Vector2f cursorCoords, State symbol);
+	bool placeSymbol(sf::Vector2f cursorCoords, State symbol);
 
 	void placeSymbol(sf::Vector2i cellPosition, GameField* activeField, State symbol);
+	
+	bool placeSymbol(sf::Vector2i fieldPosition, sf::Vector2i cellPosition, State symbol);
 
 	bool isGameOver();
 
@@ -25,7 +27,6 @@ private:
 	GameField** boardsLogic;
 	GameField* activeField;
 	renderField** boardsRender;
-	renderField* activeRenderField;
 	sf::Vector2f windowSize;
 	sf::Vector2u boardSize;
 	double gap = 20;
