@@ -49,7 +49,7 @@ int main()
 				if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 				{
 					game.clear();
-					//gameOver = false;
+					gameOver = false;
 				}
 			}
 			else
@@ -57,12 +57,25 @@ int main()
 				button.setOutlineColor(sf::Color::Black);
 			}
 		}
-		/*if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !gameOver)
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !gameOver)
 		{
 			if (!mouseButtonHold)
 			{
-				mouseButtonHold = true;*/
-		if (!gameOver) {
+				mouseButtonHold = true;
+				if(nextTurn && game.placeSymbol(cursorCoords, CROSS)){
+					nextTurn = !nextTurn;
+				}
+				else if(game.placeSymbol(cursorCoords, ZERO)){
+					nextTurn = !nextTurn;
+				}
+		
+			}
+		}
+		else
+		{
+			mouseButtonHold = false;
+		}
+		/*if (!gameOver) {
 			sf::Vector2i newTurn = sf::Vector2i(rand() % 3, rand() % 3);
 			if (nextTurn && game.placeSymbol(lastTurn, newTurn, CROSS) == true) {
 				nextTurn = !nextTurn;
@@ -79,17 +92,7 @@ int main()
 			{
 				gameOver = true;
 			}
-		}
-			/*}
-		}
-		else
-		{
-			mouseButtonHold = false;
 		}*/
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::C))
-		{
-			game.clear();
-		}
 		window.clear();
 		window.draw(background);
 		window.draw(game);

@@ -17,6 +17,7 @@ GameField::GameField()
 	}
 	winnerSymbol = EMPTY;
 	activity = true;
+	gameOver = false;
 }
 void GameField::setCellsColumn(int column = 3)
 {
@@ -52,6 +53,7 @@ bool GameField::isWin(State currentSymbol)
 		if (row || column || diagonal1 || diagonal2)
 		{
 			winnerSymbol = currentSymbol;
+			gameOver = true;
 			return true;
 		}
 	}
@@ -67,8 +69,15 @@ bool GameField::noEmptyCells()
 			result *= (cells[i][j] != EMPTY);
 		}
 	}
-
+	if (!gameOver) 
+	{
+		gameOver = result;
+	}
 	return result;
+}
+bool GameField::isGameOver()
+{
+	return gameOver;
 }
 void GameField::setSymbol(State symbol, int x, int y)
 {
@@ -103,7 +112,8 @@ void GameField::clear()
 		for (int j = 0; j < cells[i].size(); j++)
 		{
 			cells[i][j] = EMPTY;
-			winnerSymbol = EMPTY;
 		}
 	}
+	winnerSymbol = EMPTY;
+	gameOver = false;
 }

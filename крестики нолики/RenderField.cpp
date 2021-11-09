@@ -1,7 +1,7 @@
 #include "RenderField.h"
 renderField::renderField()
 {
-
+	winnerIcon = new Empty();
 }
 renderField::renderField(GameField* fieldToDraw)
 {
@@ -9,6 +9,7 @@ renderField::renderField(GameField* fieldToDraw)
 	fieldSize = sf::Vector2f(600, 600);
 	cellSize = sf::Vector2f(fieldSize.x / (double)field->getCellsCol(), fieldSize.y / (double)field->getCellsCol());
 
+	winnerIcon = new Empty();
 	icons.resize(field->getCellsCol());
 	for (int i = 0; i < field->getCellsCol(); i++)
 	{
@@ -73,6 +74,7 @@ sf::Vector2i renderField::coordsToCell(sf::Vector2f cursorPosition)
 }
 void renderField::update()
 {
+	
 	for (int i = 0; i < field->getCellsCol(); i++)
 	{
 		for (int j = 0; j < field->getCellsCol(); j++)
@@ -97,6 +99,21 @@ void renderField::update()
 				break;
 			}
 		}
+	}
+	field->isWin(ZERO);
+	field->isWin(CROSS);
+	delete winnerIcon;
+	switch (field->getWinnerSymbol())
+	{
+	case CROSS:
+		winnerIcon = new Cross(globalPosition, fieldSize);
+		break;
+	case ZERO:
+		winnerIcon = new Zero(globalPosition, fieldSize);
+		break;
+	default:
+		winnerIcon = new Empty();
+		break;
 	}
 	if (field->isActive())
 	{
@@ -133,6 +150,7 @@ void renderField::draw(sf::RenderTarget& target, sf::RenderStates states) const
 		target.draw(horisontalBorders[i]);
 		target.draw(verticalBorders[i]);
 	}
+	target.draw(*winnerIcon);
 }
 renderField::~renderField()
 {
@@ -145,92 +163,7 @@ renderField::~renderField()
 	}
 }
 
-renderField::Cross::Cross()
-{
-	t_cross.loadFromFile("cross.png");
-	cross.setTexture(t_cross);
-	cross.setScale(size.x / t_cross.getSize().x, size.y / t_cross.getSize().y);
-}
-renderField::Cross::Cross(sf::Vector2f position, sf::Vector2f size)
-{
-	this->position = position;
-	this->size = size;
-	cross.setPosition(position);
-	t_cross.loadFromFile("cross.png");
-	cross.setTexture(t_cross);
-	cross.setScale(size.x / t_cross.getSize().x, size.y / t_cross.getSize().y);
-}
-void renderField::Cross::setPosition(sf::Vector2f position)
-{
-	this->position = position;
-	cross.setPosition(position);
-}
-sf::Vector2f renderField::Cross::getPosition() 
-{
-	return position;
-}
-void renderField::Cross::setSize(sf::Vector2f size) 
-{
-	this->size = size;
-}
-void renderField::Cross::draw(sf::RenderTarget& target, sf::RenderStates states) const 
-{
-	target.draw(cross);
-}
 
-renderField::Zero::Zero()
-{
-	t_zero.loadFromFile("zero.png");
-	zero.setTexture(t_zero);
-	zero.setScale(size.x / t_zero.getSize().x, size.y / t_zero.getSize().y);
-}
-renderField::Zero::Zero(sf::Vector2f position, sf::Vector2f size)
-{
-	this->position = position;
-	this->size = size;
-	zero.setPosition(position);
-	t_zero.loadFromFile("zero.png");
-	zero.setTexture(t_zero);
-	zero.setScale(size.x / t_zero.getSize().x, size.y / t_zero.getSize().y);
-}
-void renderField::Zero::setPosition(sf::Vector2f position)
-{
-	this->position = position;
-	zero.setPosition(position);
-}
-sf::Vector2f renderField::Zero::getPosition()
-{
-	return position;
-}
-void renderField::Zero::setSize(sf::Vector2f size)
-{
-	this->size = size;
-}
-void renderField::Zero::draw(sf::RenderTarget& target, sf::RenderStates states) const
-{
-	target.draw(zero);
-}
-
-renderField::Empty::Empty()
-{
-
-}
-void renderField::Empty::setPosition(sf::Vector2f position)
-{
-	this->position = position;
-}
-sf::Vector2f renderField::Empty::getPosition()
-{
-	return position;
-}
-void renderField::Empty::setSize(sf::Vector2f size)
-{
-	this->size = size;
-}
-void renderField::Empty::draw(sf::RenderTarget& target, sf::RenderStates states) const
-{
-	return;
-}
 
 void renderField::makeHorisontalBorders()
 {
