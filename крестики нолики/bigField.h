@@ -13,7 +13,9 @@ public:
 	
 	bool placeSymbol(sf::Vector2i fieldPosition, sf::Vector2i cellPosition, State symbol);
 
-	bool isGameOver();
+	bool isWin(State symbol);
+
+	bool noEmptyFields();
 
 	void clear();
 

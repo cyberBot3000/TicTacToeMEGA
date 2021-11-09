@@ -104,29 +104,39 @@ bool bigField::placeSymbol(sf::Vector2i fieldPosition, sf::Vector2i cellPosition
 	}
 	return false;
 }
-bool bigField::isGameOver()
+bool bigField::isWin(State symbol)
 {
-	bool result = true;
-	for (int i = 0; i < 3 && result; i++)
+	for (int i = 0; i < 3; i++)
 	{
-		for (int j = 0; j < 3 && result; j++)
+		bool row = true, column = true, diagonal1 = true, diagonal2 = true;
+		for (int j = 0; j < 3; j++)
 		{
-			checkWin(boardsLogic[i][j]);
-			result *= (boardsLogic[i][j].getWinnerSymbol() != EMPTY) || (boardsLogic[i][j].getWinnerSymbol() == EMPTY && boardsLogic[i][j].noEmptyCells());
+			row *= (boardsLogic[i][j].getWinnerSymbol() == symbol);
+			column *= (boardsLogic[j][i].getWinnerSymbol() == symbol);
+			diagonal1 *= (boardsLogic[j][j].getWinnerSymbol() == symbol);
+			diagonal2 *= (boardsLogic[3 - 1 - j][j].getWinnerSymbol() == symbol);
+		}
+		if (row || column || diagonal1 || diagonal2)
+		{
+			return true;
 		}
 	}
-	if(result == true)
-		return result;
-	result = true;
-	for (int i = 0; i < 3 && result; i++)
+	return false;
+}
+
+bool bigField::noEmptyFields()
+{
+	bool result = true;
+	for (int i = 0; i < 3; i++)
 	{
-		for (int j = 0; j < 3 && result; j++)
+		for (int j = 0; j < 3; j++)
 		{
-			result *= boardsLogic[i][j].noEmptyCells();
+			result *= boardsLogic[i][j].getWinnerSymbol() != EMPTY || boardsLogic[i][j].noEmptyCells();
 		}
 	}
 	return result;
 }
+
 void bigField::clear()
 {
 	for (int i = 0; i < 3; i++)
