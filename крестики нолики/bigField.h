@@ -10,12 +10,12 @@ public:
 	bigField(const bigField& other);
 
 	bool placeSymbol(sf::Vector2f cursorCoords, State symbol);
-
-	void placeSymbol(sf::Vector2i cellPosition, GameField* activeField, State symbol);
 	
 	bool placeSymbol(sf::Vector2i fieldPosition, sf::Vector2i cellPosition, State symbol);
 
-	bool isGameOver();
+	bool isWin(State symbol);
+
+	bool noEmptyFields();
 
 	void clear();
 
@@ -25,7 +25,6 @@ public:
 
 private:
 	GameField** boardsLogic;
-	GameField* activeField;
 	renderField** boardsRender;
 	sf::Vector2f windowSize;
 	sf::Vector2u boardSize;
@@ -34,6 +33,6 @@ private:
 
 	void checkWin(GameField& field);
 
-	void changeBoardsActivity(sf::Vector2i boardPosition);
+	void changeBoardsActivity(sf::Vector2i from, sf::Vector2i to);
 
 };

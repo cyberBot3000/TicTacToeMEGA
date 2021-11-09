@@ -49,7 +49,7 @@ int main()
 				if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 				{
 					game.clear();
-					//gameOver = false;
+					gameOver = false;
 				}
 			}
 			else
@@ -61,7 +61,20 @@ int main()
 		{
 			if (!mouseButtonHold)
 			{
-				mouseButtonHold = true;*/
+				mouseButtonHold = true;
+				if(nextTurn && game.placeSymbol(cursorCoords, CROSS)){
+					nextTurn = !nextTurn;
+				}
+				else if(game.placeSymbol(cursorCoords, ZERO)){
+					nextTurn = !nextTurn;
+				}
+		
+			}
+		}
+		else
+		{
+			mouseButtonHold = false;
+		}*/
 		if (!gameOver) {
 			sf::Vector2i newTurn = sf::Vector2i(rand() % 3, rand() % 3);
 			if (nextTurn && game.placeSymbol(lastTurn, newTurn, CROSS) == true) {
@@ -75,20 +88,25 @@ int main()
 			else {
 				lastTurn = sf::Vector2i(rand() % 3, rand() % 3);
 			}
-			if (game.isGameOver())
-			{
-				gameOver = true;
-			}
 		}
-			/*}
+
+		if (game.isWin(CROSS))
+		{
+			system("cls");
+			std::cout << "you won the computer" << std::endl;
+			gameOver = true;
 		}
-		else
+		else if (game.isWin(ZERO))
 		{
-			mouseButtonHold = false;
-		}*/
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::C))
+			system("cls");
+			std::cout << "computer won" << std::endl;
+			gameOver = true;
+		}
+		else if(game.noEmptyFields())
 		{
-			game.clear();
+			system("cls");
+			std::cout << "it`s draw, nobody won and nobody lose" << std::endl;
+			gameOver = true;
 		}
 		window.clear();
 		window.draw(background);

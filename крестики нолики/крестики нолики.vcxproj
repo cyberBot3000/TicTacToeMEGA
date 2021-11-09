@@ -142,15 +142,18 @@
     <ClCompile Include="bigField.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="gameField.cpp" />
+    <ClCompile Include="Icons.cpp" />
     <ClCompile Include="RenderField.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AI.h" />
     <ClInclude Include="gameFIeld.h" />
     <ClInclude Include="enums.h" />
     <ClInclude Include="bigField.h" />
+    <ClInclude Include="Icons.h" />
     <ClInclude Include="RenderField.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

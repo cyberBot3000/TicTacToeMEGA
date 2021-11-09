@@ -14,6 +14,8 @@ public:
 
 	bool noEmptyCells();
 
+	bool isGameOver();
+
 	void setSymbol(State symbol, int x, int y);
 
 	void removeSymbol(int x, int y);
@@ -32,4 +34,5 @@ private:
 	std::vector< std::vector<State> > cells;
 	State winnerSymbol;
 	bool activity;
+	bool gameOver;
 };
