@@ -108,6 +108,7 @@ int main()
 			std::cout << "it`s draw, nobody won and nobody lose" << std::endl;
 			gameOver = true;
 		}
+		game.update();
 		window.clear();
 		window.draw(background);
 		window.draw(game);
