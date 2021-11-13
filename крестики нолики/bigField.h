@@ -5,6 +5,9 @@
 class bigField : public sf::Drawable
 {
 public:
+
+	bigField();
+
 	bigField(sf::Vector2f windowSize);
 
 	bigField(const bigField& other);
@@ -18,6 +21,8 @@ public:
 	bool noEmptyFields();
 
 	void clear();
+
+	void update();
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
@@ -35,4 +40,5 @@ private:
 
 	void changeBoardsActivity(sf::Vector2i from, sf::Vector2i to);
 
+	bool inBoardRange(sf::Vector2i position);
 };
